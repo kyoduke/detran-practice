@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 DEFAULT_URL = "http://simulado.detran.rj.gov.br/simulados/iniciarProva/habilitacao"
 IMAGE_BASE_URL = "http://simulado.detran.rj.gov.br/img/placas/"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUTPUT_PATH = PROJECT_ROOT / "static" / "detran_rj_exams.json"
+DEFAULT_OUTPUT_PATH = PROJECT_ROOT / "public" / "detran_rj_exams.json"
 
 
 def fetch_html(url, timeout):

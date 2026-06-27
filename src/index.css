@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Aptos", "Segoe UI", sans-serif;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
