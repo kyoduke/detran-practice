@@ -32,14 +32,15 @@ const SCREEN = {
   ERROR: "error",
 };
 
-const cardClass = "rounded-lg border border-zinc-300 bg-white p-6 shadow-sm";
-const actionsClass = "mt-5 flex flex-wrap gap-2.5";
+const cardClass =
+  "rounded-2xl border border-stone-200 bg-white/95 p-5 shadow-[0_24px_70px_rgba(41,37,36,0.08)] sm:p-7";
+const actionsClass = "mt-6 flex flex-wrap gap-3";
 const buttonBaseClass =
-  "rounded-md px-4 py-2.5 font-sans text-white disabled:cursor-not-allowed disabled:bg-zinc-400";
-const primaryButtonClass = `${buttonBaseClass} bg-blue-700`;
-const secondaryButtonClass = `${buttonBaseClass} bg-zinc-600`;
+  "rounded-full px-5 py-2.5 font-sans text-sm font-semibold tracking-tight text-white transition disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-600";
+const primaryButtonClass = `${buttonBaseClass} bg-slate-900 hover:bg-slate-700`;
+const secondaryButtonClass = `${buttonBaseClass} bg-stone-600 hover:bg-stone-500`;
 const linkButtonClass =
-  "mt-3 bg-transparent p-0 font-sans text-blue-700 underline";
+  "mt-4 bg-transparent p-0 font-sans text-sm font-semibold text-slate-700 underline decoration-stone-300 underline-offset-4 hover:text-slate-950";
 
 export default function App() {
   const [screen, setScreen] = useState(SCREEN.LOADING);
@@ -219,11 +220,16 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-100 text-zinc-900 font-sans">
-      <main className="mx-auto py-8 w-full max-w-3xl px-4">
-        <header className="mb-5">
-          <h1 className="mb-1.5 text-3xl font-bold">Simulado Detran RJ</h1>
-          <p className="text-zinc-600">{progressText}</p>
+    <div className="min-h-screen bg-stone-50 text-slate-950 font-sans">
+      <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-12">
+        <header className="mb-6 border-b border-stone-200 pb-5">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-amber-700">
+            Prática de prova
+          </p>
+          <h1 className="mb-2 text-4xl font-black tracking-tight sm:text-5xl">
+            Simulado Detran RJ
+          </h1>
+          <p className="text-base text-stone-600">{progressText}</p>
         </header>
 
         {screen === SCREEN.MODE ? (
@@ -265,7 +271,7 @@ export default function App() {
         ) : null}
 
         {error ? (
-          <p className="mt-4 rounded-md border border-red-700 bg-red-100 p-3 text-red-900">
+          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 font-medium text-red-900">
             {error}
           </p>
         ) : null}
@@ -277,8 +283,14 @@ export default function App() {
 function ModeCard({ hasMistakes, onStartSession, onResetProgress }) {
   return (
     <section className={cardClass}>
-      <h2 className="mb-4 text-2xl font-bold">Escolha uma sessão de prática</h2>
-      <div className="flex flex-wrap gap-2.5">
+      <h2 className="mb-3 text-2xl font-black tracking-tight">
+        Escolha uma sessão de prática
+      </h2>
+      <p className="mb-5 max-w-2xl text-stone-600">
+        Comece um simulado completo, pratique todo o banco de questões ou volte
+        aos pontos que mais precisam de atenção.
+      </p>
+      <div className="flex flex-wrap gap-3">
         <button
           className={primaryButtonClass}
           type="button"
@@ -302,7 +314,7 @@ function ModeCard({ hasMistakes, onStartSession, onResetProgress }) {
           Revisão de erros
         </button>
       </div>
-      <p className="mt-4 text-zinc-600">
+      <p className="mt-5 rounded-xl bg-stone-50 p-4 text-sm leading-relaxed text-stone-600">
         {hasMistakes
           ? "Revise questões que você já errou, priorizando seu menor desempenho."
           : "A Revisão de erros fica disponível depois que você errar uma questão confirmada."}
@@ -338,7 +350,7 @@ function QuestionCard({
   return (
     <section className={cardClass}>
       <button
-        className="mb-5 bg-transparent p-0 font-sans text-blue-700 underline"
+        className="mb-6 bg-transparent p-0 font-sans text-sm font-semibold text-slate-700 underline decoration-stone-300 underline-offset-4 hover:text-slate-950"
         type="button"
         onClick={onReturnToModeSelection}
       >
@@ -346,19 +358,19 @@ function QuestionCard({
       </button>
 
       {imageSrc ? (
-        <div className="mb-5 text-center">
+        <div className="mb-6 rounded-2xl bg-stone-50 p-4 text-center">
           <img
-            className="inline-block max-h-56 max-w-56"
+            className="inline-block max-h-56 max-w-56 rounded-lg"
             src={imageSrc}
             alt="Imagem da questão"
           />
         </div>
       ) : null}
 
-      <h2 className="mb-5 text-2xl font-bold leading-snug">
+      <h2 className="mb-6 text-2xl font-black leading-snug tracking-tight">
         {currentQuestion.question}
       </h2>
-      <div className="grid gap-2.5">
+      <div className="grid gap-3">
         {currentQuestion.alternatives.map((answer) => (
           <button
             className={getAnswerClass(answer, answered, selectedAnswerId)}
@@ -373,7 +385,7 @@ function QuestionCard({
       </div>
 
       {showPerformance ? (
-        <p className="mt-4 font-bold text-zinc-600">
+        <p className="mt-5 rounded-xl bg-stone-50 p-4 text-sm font-bold text-stone-600">
           {formatQuestionPerformance(performance, currentQuestion.id)}
         </p>
       ) : null}
@@ -405,14 +417,16 @@ function QuestionCard({
 function ResultCard({ summary, onRestart, onShowPostSessionReview }) {
   return (
     <section className={cardClass}>
-      <h2 className="mb-4 text-2xl font-bold">
+      <h2 className="mb-4 text-2xl font-black tracking-tight">
         Resultado da sessão de prática
       </h2>
-      <p>
+      <p className="text-lg font-semibold">
         Você acertou {summary.score} de {summary.totalQuestions} questões.
       </p>
-      <p>Aproveitamento: {summary.percentage}%.</p>
-      <p>Questões erradas: {summary.missedCount}.</p>
+      <p className="mt-2 text-stone-600">
+        Aproveitamento: {summary.percentage}%.
+      </p>
+      <p className="text-stone-600">Questões erradas: {summary.missedCount}.</p>
       <div className={actionsClass}>
         <button
           className={primaryButtonClass}
@@ -438,24 +452,26 @@ function ResultCard({ summary, onRestart, onShowPostSessionReview }) {
 function ReviewCard({ review, onBackToResults, onNewSession }) {
   return (
     <section className={cardClass}>
-      <h2 className="mb-4 text-2xl font-bold">Revisão pós-sessão</h2>
+      <h2 className="mb-4 text-2xl font-black tracking-tight">
+        Revisão pós-sessão
+      </h2>
       <div className="grid gap-4">
         {review.items.map((item, index) => (
           <article
-            className="border-t border-zinc-300 pt-4"
+            className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
             key={item.questionId}
           >
-            <h3 className="mb-3 text-lg font-bold">
+            <h3 className="mb-3 text-lg font-bold leading-snug">
               Erro {index + 1}: {item.questionText}
             </h3>
             {item.image.path || item.image.url ? (
               <img
-                className="mb-3 block max-h-44 max-w-44"
+                className="mb-3 block max-h-44 max-w-44 rounded-lg"
                 src={item.image.path || item.image.url}
                 alt="Imagem da questão"
               />
             ) : null}
-            <ul className="list-disc space-y-1 pl-6">
+            <ul className="list-disc space-y-1.5 pl-6 text-stone-700">
               {item.alternatives.map((answer) => (
                 <li
                   className={getReviewAnswerClass(answer, item)}
@@ -518,26 +534,26 @@ function getProgressText(screen, activeSession, progressOverride) {
 
 function getAnswerClass(answer, answered, selectedAnswerId) {
   const baseClass =
-    "w-full rounded-md border px-3.5 py-3 text-left font-sans text-zinc-900 disabled:cursor-default";
+    "w-full rounded-xl border px-4 py-3.5 text-left font-sans text-slate-900 transition disabled:cursor-default";
 
   if (answered && answer.is_correct) {
-    return `${baseClass} border-green-700 bg-green-100`;
+    return `${baseClass} border-emerald-300 bg-emerald-50 font-semibold`;
   }
 
   if (answered && answer.id === selectedAnswerId) {
-    return `${baseClass} border-red-700 bg-red-100`;
+    return `${baseClass} border-red-300 bg-red-50 font-semibold`;
   }
 
   if (answer.id === selectedAnswerId) {
-    return `${baseClass} border-blue-700 bg-blue-50`;
+    return `${baseClass} border-slate-900 bg-stone-100 shadow-inner`;
   }
 
-  return `${baseClass} border-zinc-400 bg-white hover:border-blue-700 hover:bg-blue-50`;
+  return `${baseClass} border-stone-200 bg-white hover:border-stone-400 hover:bg-stone-50`;
 }
 
 function getReviewAnswerClass(answer, item) {
   if (answer.id === item.correctAnswer.id) {
-    return "font-bold text-green-700";
+    return "font-bold text-emerald-700";
   }
 
   if (answer.id === item.selectedAnswer.id) {
