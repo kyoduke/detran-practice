@@ -1,42 +1,67 @@
+import { buildQuestionById, createPracticeSession, getValidQuestions, SESSION_MODES } from "./sessionSelection.js";
+import {
+  clearPerformance,
+  formatQuestionPerformance,
+  hasMistakeReviewQuestions,
+  loadPerformance,
+  rankMistakeReviewQuestions,
+  recordConfirmedAnswer,
+  savePerformance,
+} from "./questionPerformance.js";
+import { buildPostSessionReview, buildResultSummary, captureMissedAnswer } from "./resultViewModels.js";
+
 const DATA_URL = "detran_rj_exams.json";
 
 const progressEl = document.getElementById("progress");
+const modeCard = document.getElementById("mode-card");
+const officialModeBtn = document.getElementById("official-mode-btn");
+const allModeBtn = document.getElementById("all-mode-btn");
+const mistakeModeBtn = document.getElementById("mistake-mode-btn");
+const mistakeModeHelp = document.getElementById("mistake-mode-help");
+const resetProgressBtn = document.getElementById("reset-progress-btn");
 const questionCard = document.getElementById("question-card");
 const resultCard = document.getElementById("result-card");
+const reviewCard = document.getElementById("review-card");
 const questionTextEl = document.getElementById("question-text");
 const answersEl = document.getElementById("answers");
+const questionPerformanceEl = document.getElementById("question-performance");
 const confirmBtn = document.getElementById("confirm-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
+const postSessionReviewBtn = document.getElementById("post-session-review-btn");
+const backToResultsBtn = document.getElementById("back-to-results-btn");
+const reviewNewSessionBtn = document.getElementById("review-new-session-btn");
 const scoreEl = document.getElementById("score");
+const percentageEl = document.getElementById("percentage");
+const missedCountEl = document.getElementById("missed-count");
+const reviewItemsEl = document.getElementById("review-items");
 const errorEl = document.getElementById("error");
 const imageWrap = document.getElementById("image-wrap");
 const questionImage = document.getElementById("question-image");
 
-let questions = [];
-let currentIndex = 0;
+let data = null;
+let questionById = new Map();
+let performance = loadPerformance();
+let activeSession = null;
 let selectedAnswerId = null;
 let answered = false;
-let score = 0;
 
 async function loadQuestions() {
   try {
     const response = await fetch(DATA_URL);
     if (!response.ok) {
-      throw new Error(`Could not load ${DATA_URL}`);
+      throw new Error(`Não foi possível carregar ${DATA_URL}`);
     }
 
-    const data = await response.json();
-    questions = shuffle(readQuestions(data)).filter((question) => {
-      return question.question && Array.isArray(question.alternatives) && question.alternatives.length > 0;
-    });
+    data = await response.json();
+    const questions = getValidQuestions(data);
+    questionById = buildQuestionById(questions);
 
     if (questions.length === 0) {
-      throw new Error("The JSON file does not contain any questions.");
+      throw new Error("O arquivo JSON não contém questões válidas.");
     }
 
-    questionCard.hidden = false;
-    renderQuestion();
+    renderModeSelection();
   } catch (error) {
     progressEl.textContent = "Erro ao carregar.";
     errorEl.textContent = error.message;
@@ -44,51 +69,59 @@ async function loadQuestions() {
   }
 }
 
-function readQuestions(data) {
-  if (Array.isArray(data.questions)) {
-    return data.questions;
-  }
+function renderModeSelection() {
+  hideAllCards();
+  modeCard.hidden = false;
+  progressEl.textContent = "Escolha como deseja praticar.";
 
-  const byQuestion = new Map();
-  Object.values(data.exam_versions || {}).forEach((exam) => {
-    (exam.questions || []).forEach((question) => {
-      const key = [question.question, question.image_code, question.correct_answer_text].join("|");
-      if (!byQuestion.has(key)) {
-        byQuestion.set(key, convertOldQuestion(question));
-      }
-    });
-  });
-  return [...byQuestion.values()];
+  const availableQuestionIds = [...questionById.keys()];
+  const hasMistakes = hasMistakeReviewQuestions(performance, availableQuestionIds);
+  mistakeModeBtn.disabled = !hasMistakes;
+  mistakeModeHelp.textContent = hasMistakes
+    ? "Revise questões que você já errou, priorizando seu menor desempenho."
+    : "A Revisão de erros fica disponível depois que você errar uma questão confirmada.";
 }
 
-function convertOldQuestion(question) {
-  return {
-    question: question.question,
-    image_code: question.image_code,
-    image_path: question.image_path,
-    image_url: question.image_url,
-    alternatives: Object.entries(question.alternatives || {}).map(([id, text]) => ({
-      id,
-      text,
-      is_correct: id === question.correct_answer,
-    })),
+function startSession(mode) {
+  const selection = createPracticeSession(data, mode, { performance, rankMistakeReviewQuestions });
+  if (!selection.ok) {
+    progressEl.textContent = "Modo indisponível.";
+    errorEl.textContent = selection.message;
+    errorEl.hidden = false;
+    return;
+  }
+
+  errorEl.hidden = true;
+  activeSession = {
+    mode: selection.mode,
+    title: selection.title,
+    source: selection.source,
+    questions: selection.questionIds.map((id) => questionById.get(id)),
+    currentIndex: 0,
+    score: 0,
+    missedAnswers: [],
   };
+
+  hideAllCards();
+  questionCard.hidden = false;
+  renderQuestion();
 }
 
 function renderQuestion() {
-  const question = questions[currentIndex];
+  const question = getCurrentQuestion();
   selectedAnswerId = null;
   answered = false;
 
-  progressEl.textContent = `Questão ${currentIndex + 1} de ${questions.length}`;
+  progressEl.textContent = `${activeSession.title}: questão ${activeSession.currentIndex + 1} de ${activeSession.questions.length}`;
   questionTextEl.textContent = question.question;
   answersEl.innerHTML = "";
   confirmBtn.disabled = true;
   confirmBtn.hidden = false;
   nextBtn.hidden = true;
+  questionPerformanceEl.hidden = true;
+  questionPerformanceEl.textContent = "";
 
   const imageSrc = question.image_path || question.image_url;
-
   if (imageSrc) {
     questionImage.src = imageSrc;
     imageWrap.hidden = false;
@@ -126,13 +159,19 @@ function confirmAnswer() {
     return;
   }
 
-  const question = questions[currentIndex];
+  const question = getCurrentQuestion();
   const selected = question.alternatives.find((answer) => answer.id === selectedAnswerId);
+  const isCorrect = Boolean(selected && selected.is_correct);
   answered = true;
 
-  if (selected && selected.is_correct) {
-    score += 1;
+  if (isCorrect) {
+    activeSession.score += 1;
+  } else {
+    activeSession.missedAnswers.push(captureMissedAnswer(question, selectedAnswerId));
   }
+
+  performance = recordConfirmedAnswer(performance, question.id, isCorrect);
+  savePerformance(performance);
 
   document.querySelectorAll(".answer").forEach((button) => {
     const answer = question.alternatives.find((item) => item.id === button.dataset.answerId);
@@ -145,15 +184,20 @@ function confirmAnswer() {
     }
   });
 
+  if (activeSession.mode === SESSION_MODES.MISTAKE_REVIEW) {
+    questionPerformanceEl.textContent = formatQuestionPerformance(performance, question.id);
+    questionPerformanceEl.hidden = false;
+  }
+
   confirmBtn.hidden = true;
   nextBtn.hidden = false;
-  nextBtn.textContent = currentIndex + 1 === questions.length ? "Finish" : "Next";
+  nextBtn.textContent = activeSession.currentIndex + 1 === activeSession.questions.length ? "Ver resultado" : "Próxima";
 }
 
 function nextQuestion() {
-  currentIndex += 1;
+  activeSession.currentIndex += 1;
 
-  if (currentIndex >= questions.length) {
+  if (activeSession.currentIndex >= activeSession.questions.length) {
     showResult();
     return;
   }
@@ -162,34 +206,88 @@ function nextQuestion() {
 }
 
 function showResult() {
-  questionCard.hidden = true;
+  hideAllCards();
   resultCard.hidden = false;
-  progressEl.textContent = "Finalizado";
-  scoreEl.textContent = `Você acertou ${score} de ${questions.length} questões.`;
+  progressEl.textContent = "Sessão de prática finalizada.";
+
+  const summary = buildResultSummary(activeSession);
+  scoreEl.textContent = `Você acertou ${summary.score} de ${summary.totalQuestions} questões.`;
+  percentageEl.textContent = `Aproveitamento: ${summary.percentage}%.`;
+  missedCountEl.textContent = `Questões erradas: ${summary.missedCount}.`;
+  postSessionReviewBtn.hidden = !summary.canOpenPostSessionReview;
 }
 
-function restartExam() {
-  questions = shuffle(questions);
-  currentIndex = 0;
-  selectedAnswerId = null;
-  answered = false;
-  score = 0;
-  resultCard.hidden = true;
-  questionCard.hidden = false;
-  renderQuestion();
+function showPostSessionReview() {
+  const review = buildPostSessionReview(activeSession.missedAnswers);
+  hideAllCards();
+  reviewCard.hidden = false;
+  progressEl.textContent = "Revise apenas os erros da sessão recém-finalizada.";
+  reviewItemsEl.innerHTML = "";
+
+  review.items.forEach((item, index) => {
+    const article = document.createElement("article");
+    article.className = "review-item";
+
+    const title = document.createElement("h3");
+    title.textContent = `Erro ${index + 1}: ${item.questionText}`;
+    article.appendChild(title);
+
+    const imageSrc = item.image.path || item.image.url;
+    if (imageSrc) {
+      const image = document.createElement("img");
+      image.src = imageSrc;
+      image.alt = "Imagem da questão";
+      article.appendChild(image);
+    }
+
+    const list = document.createElement("ul");
+    item.alternatives.forEach((answer) => {
+      const option = document.createElement("li");
+      option.textContent = answer.text;
+      if (answer.id === item.correctAnswer.id) {
+        option.className = "correct-text";
+        option.textContent += " (resposta correta)";
+      } else if (answer.id === item.selectedAnswer.id) {
+        option.className = "incorrect-text";
+        option.textContent += " (sua resposta)";
+      }
+      list.appendChild(option);
+    });
+    article.appendChild(list);
+    reviewItemsEl.appendChild(article);
+  });
 }
 
-function shuffle(items) {
-  const copy = [...items];
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+function resetProgress() {
+  if (!window.confirm("Tem certeza que deseja resetar todo o desempenho salvo?")) {
+    return;
   }
-  return copy;
+
+  clearPerformance();
+  performance = loadPerformance();
+  renderModeSelection();
 }
 
+function getCurrentQuestion() {
+  return activeSession.questions[activeSession.currentIndex];
+}
+
+function hideAllCards() {
+  modeCard.hidden = true;
+  questionCard.hidden = true;
+  resultCard.hidden = true;
+  reviewCard.hidden = true;
+}
+
+officialModeBtn.addEventListener("click", () => startSession(SESSION_MODES.OFFICIAL_30));
+allModeBtn.addEventListener("click", () => startSession(SESSION_MODES.ALL_QUESTIONS));
+mistakeModeBtn.addEventListener("click", () => startSession(SESSION_MODES.MISTAKE_REVIEW));
+resetProgressBtn.addEventListener("click", resetProgress);
 confirmBtn.addEventListener("click", confirmAnswer);
 nextBtn.addEventListener("click", nextQuestion);
-restartBtn.addEventListener("click", restartExam);
+restartBtn.addEventListener("click", () => startSession(SESSION_MODES.OFFICIAL_30));
+postSessionReviewBtn.addEventListener("click", showPostSessionReview);
+backToResultsBtn.addEventListener("click", showResult);
+reviewNewSessionBtn.addEventListener("click", () => startSession(SESSION_MODES.OFFICIAL_30));
 
 loadQuestions();

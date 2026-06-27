@@ -36,6 +36,12 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.mode-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 #question-text {
   margin: 0 0 18px;
   font-size: 22px;
@@ -91,6 +97,7 @@ body {
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
 }
@@ -110,172 +117,63 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button.secondary {
+  background: #555;
+}
+
+.link-button {
+  margin-top: 12px;
+  padding: 0;
+  background: transparent;
+  color: #1f66d1;
+  text-decoration: underline;
+}
+
+.muted,
+.performance {
+  color: #555;
+}
+
+.performance {
+  margin: 16px 0 0;
+  font-weight: 700;
+}
+
+.review-items {
+  display: grid;
+  gap: 16px;
+}
+
+.review-item {
+  border-top: 1px solid #ddd;
+  padding-top: 16px;
+}
+
+.review-item h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.review-item img {
+  display: block;
+  max-width: 180px;
+  max-height: 180px;
+  margin: 0 0 12px;
+}
+
+.correct-text {
+  color: #1f8f3a;
+  font-weight: 700;
+}
+
+.incorrect-text {
+  color: #c93535;
+  font-weight: 700;
+}
+
 .error {
   padding: 12px;
   border: 1px solid #c93535;
   border-radius: 6px;
   background: #f9dddd;
 }
-*** Add File: /tmp/detran/app.js
-const DATA_URL = "detran_rj_exams.json";
-
-const progressEl = document.getElementById("progress");
-const questionCard = document.getElementById("question-card");
-const resultCard = document.getElementById("result-card");
-const questionTextEl = document.getElementById("question-text");
-const answersEl = document.getElementById("answers");
-const confirmBtn = document.getElementById("confirm-btn");
-const nextBtn = document.getElementById("next-btn");
-const restartBtn = document.getElementById("restart-btn");
-const scoreEl = document.getElementById("score");
-const errorEl = document.getElementById("error");
-const imageWrap = document.getElementById("image-wrap");
-const questionImage = document.getElementById("question-image");
-
-let questions = [];
-let currentIndex = 0;
-let selectedAnswerId = null;
-let answered = false;
-let score = 0;
-
-async function loadQuestions() {
-  try {
-    const response = await fetch(DATA_URL);
-    if (!response.ok) {
-      throw new Error(`Could not load ${DATA_URL}`);
-    }
-
-    const data = await response.json();
-    questions = shuffle(data.questions || []).filter((question) => {
-      return question.question && Array.isArray(question.alternatives) && question.alternatives.length > 0;
-    });
-
-    if (questions.length === 0) {
-      throw new Error("The JSON file does not contain any questions.");
-    }
-
-    questionCard.hidden = false;
-    renderQuestion();
-  } catch (error) {
-    progressEl.textContent = "Erro ao carregar.";
-    errorEl.textContent = error.message;
-    errorEl.hidden = false;
-  }
-}
-
-function renderQuestion() {
-  const question = questions[currentIndex];
-  selectedAnswerId = null;
-  answered = false;
-
-  progressEl.textContent = `Questão ${currentIndex + 1} de ${questions.length}`;
-  questionTextEl.textContent = question.question;
-  answersEl.innerHTML = "";
-  confirmBtn.disabled = true;
-  confirmBtn.hidden = false;
-  nextBtn.hidden = true;
-
-  if (question.image_url) {
-    questionImage.src = question.image_url;
-    imageWrap.hidden = false;
-  } else {
-    questionImage.removeAttribute("src");
-    imageWrap.hidden = true;
-  }
-
-  question.alternatives.forEach((answer) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "answer";
-    button.dataset.answerId = answer.id;
-    button.textContent = answer.text;
-    button.addEventListener("click", () => selectAnswer(answer.id));
-    answersEl.appendChild(button);
-  });
-}
-
-function selectAnswer(answerId) {
-  if (answered) {
-    return;
-  }
-
-  selectedAnswerId = answerId;
-  confirmBtn.disabled = false;
-
-  document.querySelectorAll(".answer").forEach((button) => {
-    button.classList.toggle("selected", button.dataset.answerId === answerId);
-  });
-}
-
-function confirmAnswer() {
-  if (!selectedAnswerId || answered) {
-    return;
-  }
-
-  const question = questions[currentIndex];
-  const selected = question.alternatives.find((answer) => answer.id === selectedAnswerId);
-  answered = true;
-
-  if (selected && selected.is_correct) {
-    score += 1;
-  }
-
-  document.querySelectorAll(".answer").forEach((button) => {
-    const answer = question.alternatives.find((item) => item.id === button.dataset.answerId);
-    button.disabled = true;
-
-    if (answer && answer.is_correct) {
-      button.classList.add("correct");
-    } else if (button.dataset.answerId === selectedAnswerId) {
-      button.classList.add("incorrect");
-    }
-  });
-
-  confirmBtn.hidden = true;
-  nextBtn.hidden = false;
-  nextBtn.textContent = currentIndex + 1 === questions.length ? "Finish" : "Next";
-}
-
-function nextQuestion() {
-  currentIndex += 1;
-
-  if (currentIndex >= questions.length) {
-    showResult();
-    return;
-  }
-
-  renderQuestion();
-}
-
-function showResult() {
-  questionCard.hidden = true;
-  resultCard.hidden = false;
-  progressEl.textContent = "Finalizado";
-  scoreEl.textContent = `Você acertou ${score} de ${questions.length} questões.`;
-}
-
-function restartExam() {
-  questions = shuffle(questions);
-  currentIndex = 0;
-  selectedAnswerId = null;
-  answered = false;
-  score = 0;
-  resultCard.hidden = true;
-  questionCard.hidden = false;
-  renderQuestion();
-}
-
-function shuffle(items) {
-  const copy = [...items];
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
-  }
-  return copy;
-}
-
-confirmBtn.addEventListener("click", confirmAnswer);
-nextBtn.addEventListener("click", nextQuestion);
-restartBtn.addEventListener("click", restartExam);
-
-loadQuestions();
