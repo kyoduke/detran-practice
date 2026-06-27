@@ -25,17 +25,22 @@ The project includes:
 
 ## Generate The Question Database
 
-Run the scraper from the `static/` folder so the JSON is saved where the web app expects it:
+Run the scraper from the project root:
 
 ```bash
-cd static
-python3 ../scripts/detran_rj_scraper.py
+python3 scripts/detran_rj_scraper.py
 ```
 
 This creates or updates:
 
 ```text
 static/detran_rj_exams.json
+```
+
+To write the JSON somewhere else, use:
+
+```bash
+python3 scripts/detran_rj_scraper.py --output path/to/file.json
 ```
 
 ## Run With Docker
