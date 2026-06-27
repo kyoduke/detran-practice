@@ -1,12 +1,13 @@
 # Detran RJ Exam Practice
 
-Small static web app for practicing Detran RJ simulated exam questions.
+Web app for practicing Detran RJ simulated exam questions.
 
 The project includes:
 
 - A Python scraper that fetches exam versions from the Detran RJ simulator and saves a JSON database.
-- A static HTML/CSS/JS app that reads the JSON file and presents questions one at a time.
-- Docker support using nginx to serve the static files.
+- A React app that reads the JSON file and presents questions one at a time.
+- Tailwind CSS for simple utility-based styling.
+- Docker support that builds the Vite app and serves the output with nginx.
 
 ## Structure
 
@@ -14,13 +15,35 @@ The project includes:
 .
 ├── Dockerfile
 ├── docker-compose.yml
+├── index.html
+├── public/
+│   ├── img/
+│   └── detran_rj_exams.json
 ├── scripts/
 │   └── detran_rj_scraper.py
-└── static/
-    ├── index.html
-    ├── styles.css
-    ├── app.js
-    └── detran_rj_exams.json
+└── src/
+    ├── App.jsx
+    ├── main.jsx
+    ├── index.css
+    ├── questionPerformance.js
+    ├── resultViewModels.js
+    └── sessionSelection.js
+```
+
+## Run Locally
+
+Install dependencies and start the Vite dev server:
+
+```bash
+npm install
+npm run dev
+```
+
+To build and preview the production output locally:
+
+```bash
+npm run build
+npm run preview
 ```
 
 ## Generate The Question Database
@@ -34,7 +57,7 @@ python3 scripts/detran_rj_scraper.py
 This creates or updates:
 
 ```text
-static/detran_rj_exams.json
+public/detran_rj_exams.json
 ```
 
 To write the JSON somewhere else, use:
