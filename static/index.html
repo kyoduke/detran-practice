@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simulado Detran RJ</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1>Simulado Detran RJ</h1>
+        <p id="progress">Carregando...</p>
+      </header>
+
+      <section id="question-card" class="card" hidden>
+        <div id="image-wrap" class="image-wrap" hidden>
+          <img id="question-image" alt="Imagem da questão">
+        </div>
+
+        <h2 id="question-text"></h2>
+        <div id="answers" class="answers"></div>
+
+        <div class="actions">
+          <button id="confirm-btn" type="button">Confirm</button>
+          <button id="next-btn" type="button" hidden>Next</button>
+        </div>
+      </section>
+
+      <section id="result-card" class="card" hidden>
+        <h2>Resultado</h2>
+        <p id="score"></p>
+        <button id="restart-btn" type="button">Restart</button>
+      </section>
+
+      <p id="error" class="error" hidden></p>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

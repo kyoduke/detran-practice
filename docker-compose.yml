@@ -1,0 +1,5 @@
+services:
+  detran-exam:
+    build: .
+    ports:
+      - "8080:80"
