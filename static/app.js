@@ -65,6 +65,7 @@ function convertOldQuestion(question) {
   return {
     question: question.question,
     image_code: question.image_code,
+    image_path: question.image_path,
     image_url: question.image_url,
     alternatives: Object.entries(question.alternatives || {}).map(([id, text]) => ({
       id,
@@ -86,8 +87,10 @@ function renderQuestion() {
   confirmBtn.hidden = false;
   nextBtn.hidden = true;
 
-  if (question.image_url) {
-    questionImage.src = question.image_url;
+  const imageSrc = question.image_path || question.image_url;
+
+  if (imageSrc) {
+    questionImage.src = imageSrc;
     imageWrap.hidden = false;
   } else {
     questionImage.removeAttribute("src");

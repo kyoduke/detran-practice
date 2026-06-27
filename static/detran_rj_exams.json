@@ -242,6 +242,7 @@
       "question": "O que indica a placa acima?",
       "image_code": "A-42C",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-42C.GIF",
+      "image_path": "img/A-42C.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -864,6 +865,7 @@
       "question": "Por que é importante respeitar o sentido de circulação indicado pela placa acima em áreas urbanas?",
       "image_code": "R-24A",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-24A.GIF",
+      "image_path": "img/R-24A.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -901,6 +903,7 @@
       "question": "Por que é importante manter atenção redobrada no tipo de cruzamento indicado por essa placa?",
       "image_code": "A-8",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-8.GIF",
+      "image_path": "img/A-8.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -1560,6 +1563,7 @@
       "question": "Que atitude deve ter o motorista de carro ao ver essa placa?",
       "image_code": "R-32",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-32.GIF",
+      "image_path": "img/R-32.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -1708,6 +1712,7 @@
       "question": "O que o motorista deve evitar dentro da rotatória sinalizada por essa placa?",
       "image_code": "A-12",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-12.GIF",
+      "image_path": "img/A-12.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -2552,6 +2557,7 @@
       "question": "Beatriz estaciona rapidamente com o pisca-alerta ligado em local com a placa acima. Essa ação é permitida?",
       "image_code": "R-6A",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-6A.GIF",
+      "image_path": "img/R-6A.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -2927,6 +2933,7 @@
       "question": "Rafaela dirige e vê a placa acima antes de uma praça com pedestres. Por que essa placa foi colocada ali?",
       "image_code": "R-10",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-10.GIF",
+      "image_path": "img/R-10.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -2964,6 +2971,7 @@
       "question": "Ao encontrar a placa “PARE” em um cruzamento, o condutor deve:",
       "image_code": "R-1",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-1.GIF",
+      "image_path": "img/R-1.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -3001,6 +3009,7 @@
       "question": "Qual é o principal risco ao ignorar a placa acima?",
       "image_code": "A-42B",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-42B.GIF",
+      "image_path": "img/A-42B.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -3724,6 +3733,7 @@
       "question": "Ricardo trafega à noite e vê a placa acima em um trecho de pista simples. O que deve fazer?",
       "image_code": "R-5A",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-5A.GIF",
+      "image_path": "img/R-5A.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -3761,6 +3771,7 @@
       "question": "Marina está em local com a placa acima acompanhada de uma placa auxiliar “Das 7h às 19h”. Às 21h, ela estaciona. Está correta?",
       "image_code": "R-6A",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-6A.GIF",
+      "image_path": "img/R-6A.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -3798,6 +3809,7 @@
       "question": "Por que as placas semelhantes a esta acima podem ter diferentes valores em um mesmo trajeto?",
       "image_code": "R-19",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-19.GIF",
+      "image_path": "img/R-19.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -4067,6 +4079,7 @@
       "question": "O que significa a placa acima?",
       "image_code": "A-35",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-35.GIF",
+      "image_path": "img/A-35.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -4400,6 +4413,7 @@
       "question": "Ana dirige em pista simples e encontra a placa acima. Essa proibição deve ser seguida enquanto:",
       "image_code": "R-7",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-7.GIF",
+      "image_path": "img/R-7.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -4437,6 +4451,7 @@
       "question": "Em quais locais a placa acima é mais utilizada?",
       "image_code": "R-38",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-38.GIF",
+      "image_path": "img/R-38.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -4474,6 +4489,7 @@
       "question": "Por que é importante que esta placa esteja visível logo na entrada da via?",
       "image_code": "A-45",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-45.GIF",
+      "image_path": "img/A-45.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -4664,6 +4680,7 @@
       "question": "Quais veículos são abrangidos pela proibição da placa acima?",
       "image_code": "R-37",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-37.GIF",
+      "image_path": "img/R-37.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -4701,6 +4718,7 @@
       "question": "Qual o risco de desrespeitar a placa acima?",
       "image_code": "R-37",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-37.GIF",
+      "image_path": "img/R-37.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -6053,6 +6071,7 @@
       "question": "O que indica a placa acima?",
       "image_code": "R-33",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-33.GIF",
+      "image_path": "img/R-33.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -6090,6 +6109,7 @@
       "question": "Por que é importante o uso da placa acima?",
       "image_code": "R-44",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-44.GIF",
+      "image_path": "img/R-44.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -6127,6 +6147,7 @@
       "question": "Ao ver a placa de “Área Escolar”, o que o motorista deve fazer?",
       "image_code": "A-33A",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-33A.GIF",
+      "image_path": "img/A-33A.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -6164,6 +6185,7 @@
       "question": "Lucas conduz seu carro e vê a placa acima junto a uma faixa contínua amarela. O que isso significa?",
       "image_code": "R-4B",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-4B.GIF",
+      "image_path": "img/R-4B.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -6201,6 +6223,7 @@
       "question": "André dirige em uma avenida e vê a placa acima. O que deve fazer?",
       "image_code": "R-8A",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-8A.GIF",
+      "image_path": "img/R-8A.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -6618,6 +6641,7 @@
       "question": "Camila trafega atrás de um caminhão em um trecho com a placa acima. O que ela deve fazer?",
       "image_code": "R-7",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-7.GIF",
+      "image_path": "img/R-7.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -7289,6 +7313,7 @@
       "question": "Por que é importante diminuir a velocidade ao ver essa placa?",
       "image_code": "A-19",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/A-19.GIF",
+      "image_path": "img/A-19.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -7326,6 +7351,7 @@
       "question": "Joana vê placa azul com símbolo de hotel. O que isso indica?",
       "image_code": "SAU-13",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/SAU-13.GIF",
+      "image_path": "img/SAU-13.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -7363,6 +7389,7 @@
       "question": "Diego vê placa marrom com símbolo de museu. Que informação recebe?",
       "image_code": "THC-05",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/THC-05.GIF",
+      "image_path": "img/THC-05.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -7955,6 +7982,7 @@
       "question": "O que indica a placa acima?",
       "image_code": "R-44",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-44.GIF",
+      "image_path": "img/R-44.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -7992,6 +8020,7 @@
       "question": "Qual é o comportamento correto ao se deparar com a placa acima?",
       "image_code": "R-23",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-23.GIF",
+      "image_path": "img/R-23.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -8473,6 +8502,7 @@
       "question": "Bruno deseja deixar um passageiro em local com a placa acima. O que ele deve fazer?",
       "image_code": "R-6C",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-6C.GIF",
+      "image_path": "img/R-6C.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -8880,6 +8910,7 @@
       "question": "Uma placa marrom com símbolo de árvores indica:",
       "image_code": "TAR-03",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/TAR-03.GIF",
+      "image_path": "img/TAR-03.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -8917,6 +8948,7 @@
       "question": "Qual o principal objetivo da placa acima?",
       "image_code": "R-32",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-32.GIF",
+      "image_path": "img/R-32.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -8954,6 +8986,7 @@
       "question": "Qual a atitude correta de um automóvel diante dessa placa?",
       "image_code": "R-39",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-39.GIF",
+      "image_path": "img/R-39.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -9102,6 +9135,7 @@
       "question": "Um condutor vê a placa acima junto a outra com o texto “Exceto veículos de emergência”. O que isso significa?",
       "image_code": "R-14",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-14.GIF",
+      "image_path": "img/R-14.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -9213,6 +9247,7 @@
       "question": "Uma placa azul com símbolo de uma cruz vermelha representa:",
       "image_code": "SAU-10",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/SAU-10.GIF",
+      "image_path": "img/SAU-10.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -9250,6 +9285,7 @@
       "question": "Por que a placa acima é importante em vias urbanas com semáforo?",
       "image_code": "R-25C",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-25C.GIF",
+      "image_path": "img/R-25C.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -9583,6 +9619,7 @@
       "question": "O que indica a placa acima?",
       "image_code": "R-26",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/R-26.GIF",
+      "image_path": "img/R-26.GIF",
       "video_libras": null,
       "alternatives": [
         {
@@ -9620,6 +9657,7 @@
       "question": "Uma placa azul com símbolo de pneu indica:",
       "image_code": "SAU-08",
       "image_url": "http://simulado.detran.rj.gov.br/img/placas/SAU-08.GIF",
+      "image_path": "img/SAU-08.GIF",
       "video_libras": null,
       "alternatives": [
         {
