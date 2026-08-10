@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ClipboardList, BookOpen, Info } from "lucide-react";
 
 import {
   buildQuestionById,
@@ -21,6 +22,19 @@ import {
   captureMissedAnswer,
 } from "./resultViewModels.js";
 
+import Logo from "./components/Logo.jsx";
+import AppBar from "./components/AppBar.jsx";
+import ConsoleBar from "./components/ConsoleBar.jsx";
+import Button from "./components/Button.jsx";
+import AnswerOption from "./components/AnswerOption.jsx";
+import Badge from "./components/Badge.jsx";
+import ProgressBar from "./components/ProgressBar.jsx";
+import ScoreRing from "./components/ScoreRing.jsx";
+import ActionDock from "./components/ActionDock.jsx";
+import ModeRow from "./components/ModeRow.jsx";
+import PerformancePanel from "./components/PerformancePanel.jsx";
+import FeaturesBar from "./components/FeaturesBar.jsx";
+
 const DATA_URL = `${import.meta.env.BASE_URL}detran_rj_exams.json`;
 
 const SCREEN = {
@@ -32,15 +46,13 @@ const SCREEN = {
   ERROR: "error",
 };
 
-const cardClass =
-  "rounded-2xl border border-stone-200 bg-white/95 p-5 shadow-[0_24px_70px_rgba(41,37,36,0.08)] sm:p-7";
-const actionsClass = "mt-6 flex flex-wrap gap-3";
-const buttonBaseClass =
-  "rounded-full px-5 py-2.5 font-sans text-sm font-semibold tracking-tight text-white transition disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-600";
-const primaryButtonClass = `${buttonBaseClass} bg-slate-900 hover:bg-slate-700`;
-const secondaryButtonClass = `${buttonBaseClass} bg-stone-600 hover:bg-stone-500`;
-const linkButtonClass =
-  "mt-4 bg-transparent p-0 font-sans text-sm font-semibold text-slate-700 underline decoration-stone-300 underline-offset-4 hover:text-slate-950";
+const LETTERS = ["A", "B", "C", "D", "E", "F"];
+
+const MODE_LABELS = {
+  [SESSION_MODES.OFFICIAL_30]: "SIMULADO DE 30 QUESTÕES",
+  [SESSION_MODES.ALL_QUESTIONS]: "TODAS AS QUESTÕES",
+  [SESSION_MODES.MISTAKE_REVIEW]: "REVISÃO DE ERROS",
+};
 
 export default function App() {
   const [screen, setScreen] = useState(SCREEN.LOADING);
@@ -83,18 +95,29 @@ export default function App() {
 
   const currentQuestion =
     activeSession?.questions[activeSession.currentIndex] || null;
-  const progressText = getProgressText(screen, activeSession, progressOverride);
   const availableQuestionIds = [...questionById.keys()];
   const hasMistakes = hasMistakeReviewQuestions(
     performance,
     availableQuestionIds,
   );
+  const totalPracticed = Object.values(performance.questions || {}).filter(
+    (s) => s.correct + s.wrong > 0,
+  ).length;
   const resultSummary = activeSession
     ? buildResultSummary(activeSession)
     : null;
   const postSessionReview = activeSession
     ? buildPostSessionReview(activeSession.missedAnswers)
     : null;
+
+  function getPerformanceStats() {
+    const entries = Object.values(performance.questions || {});
+    const totalCorrect = entries.reduce((sum, s) => sum + s.correct, 0);
+    const totalWrong = entries.reduce((sum, s) => sum + s.wrong, 0);
+    const total = totalCorrect + totalWrong;
+    const percentage = total === 0 ? 0 : Math.round((totalCorrect / total) * 100);
+    return { percentage, hits: totalCorrect, misses: totalWrong };
+  }
 
   function startSession(mode) {
     const selection = createPracticeSession(data, mode, {
@@ -124,10 +147,7 @@ export default function App() {
   }
 
   function selectAnswer(answerId) {
-    if (answered) {
-      return;
-    }
-
+    if (answered) return;
     setSelectedAnswerId(answerId);
   }
 
@@ -162,9 +182,7 @@ export default function App() {
   }
 
   function nextQuestion() {
-    if (!activeSession) {
-      return;
-    }
+    if (!activeSession) return;
 
     if (activeSession.currentIndex + 1 >= activeSession.questions.length) {
       setScreen(SCREEN.RESULT);
@@ -205,6 +223,15 @@ export default function App() {
     setScreen(SCREEN.MODE);
   }
 
+  function goToHome() {
+    setActiveSession(null);
+    setSelectedAnswerId(null);
+    setAnswered(false);
+    setError("");
+    setProgressOverride("");
+    setScreen(SCREEN.MODE);
+  }
+
   function resetProgress() {
     if (
       !window.confirm("Tem certeza que deseja resetar todo o desempenho salvo?")
@@ -219,26 +246,53 @@ export default function App() {
     setScreen(SCREEN.MODE);
   }
 
-  return (
-    <div className="min-h-screen bg-stone-50 text-slate-950 font-sans">
-      <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-12">
-        <header className="mb-6 border-b border-stone-200 pb-5">
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-amber-700">
-            Prática de prova
-          </p>
-          <h1 className="mb-2 text-4xl font-black tracking-tight sm:text-5xl">
-            Simulado Detran RJ
-          </h1>
-          <p className="text-base text-stone-600">{progressText}</p>
-        </header>
+  const perfStats = getPerformanceStats();
 
-        {screen === SCREEN.MODE ? (
+  return (
+    <div className="min-h-screen bg-bg text-text-primary">
+      {screen === SCREEN.MODE && (
+        <>
+          <AppBar>
+            <Logo />
+          </AppBar>
           <ModeCard
             hasMistakes={hasMistakes}
+            perfStats={perfStats}
+            totalPracticed={totalPracticed}
             onStartSession={startSession}
             onResetProgress={resetProgress}
           />
-        ) : null}
+        </>
+      )}
+
+      {(screen === SCREEN.QUESTION || screen === SCREEN.REVIEW) && (
+        <ConsoleBar
+          modeLabel={
+            screen === SCREEN.REVIEW
+              ? "REVISÃO PÓS-SESSÃO"
+              : MODE_LABELS[activeSession?.mode] || "SESSÃO"
+          }
+          counter={
+            screen === SCREEN.REVIEW
+              ? `${activeSession?.missedAnswers.length || 0} questões para revisar`
+              : `Questão ${activeSession.currentIndex + 1} de ${activeSession.questions.length}`
+          }
+          progress={activeSession ? ((activeSession.currentIndex + 1) / activeSession.questions.length) * 170 : 0}
+          progressWidth={
+            activeSession ? ((activeSession.currentIndex + 1) / activeSession.questions.length) * 170 : 0
+          }
+        />
+      )}
+
+      {screen === SCREEN.RESULT && (
+        <AppBar>
+          <Logo />
+          <Badge color="primary" label="FINALIZADO" />
+        </AppBar>
+      )}
+
+      <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-12">
+        {screen === SCREEN.MODE ? null : null}
 
         {screen === SCREEN.QUESTION && currentQuestion ? (
           <QuestionCard
@@ -250,6 +304,7 @@ export default function App() {
             onConfirmAnswer={confirmAnswer}
             onReturnToModeSelection={returnToModeSelection}
             onNextQuestion={nextQuestion}
+            onGoToResult={() => setScreen(SCREEN.RESULT)}
             onSelectAnswer={selectAnswer}
           />
         ) : null}
@@ -259,6 +314,7 @@ export default function App() {
             summary={resultSummary}
             onRestart={() => startSession(SESSION_MODES.OFFICIAL_30)}
             onShowPostSessionReview={() => setScreen(SCREEN.REVIEW)}
+            onBackToHome={goToHome}
           />
         ) : null}
 
@@ -271,62 +327,68 @@ export default function App() {
         ) : null}
 
         {error ? (
-          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 font-medium text-red-900">
+          <p className="mt-4 rounded-xl border border-error/20 bg-error-soft p-4 font-medium text-error">
             {error}
           </p>
         ) : null}
       </main>
+
+      {screen === SCREEN.MODE && <FeaturesBar />}
     </div>
   );
 }
 
-function ModeCard({ hasMistakes, onStartSession, onResetProgress }) {
+function ModeCard({ hasMistakes, perfStats, totalPracticed, onStartSession, onResetProgress }) {
   return (
-    <section className={cardClass}>
-      <h2 className="mb-3 text-2xl font-black tracking-tight">
-        Escolha uma sessão de prática
-      </h2>
-      <p className="mb-5 max-w-2xl text-stone-600">
-        Comece um simulado completo, pratique todo o banco de questões ou volte
-        aos pontos que mais precisam de atenção.
-      </p>
-      <div className="flex flex-wrap gap-3">
-        <button
-          className={primaryButtonClass}
-          type="button"
-          onClick={() => onStartSession(SESSION_MODES.OFFICIAL_30)}
-        >
-          Simulado de 30 questões
-        </button>
-        <button
-          className={secondaryButtonClass}
-          type="button"
-          onClick={() => onStartSession(SESSION_MODES.ALL_QUESTIONS)}
-        >
-          Todas as questões
-        </button>
-        <button
-          className={secondaryButtonClass}
-          type="button"
-          disabled={!hasMistakes}
-          onClick={() => onStartSession(SESSION_MODES.MISTAKE_REVIEW)}
-        >
-          Revisão de erros
-        </button>
+    <div className="mx-auto flex w-full max-w-3xl gap-5 px-4 py-8 sm:py-12">
+      <PerformancePanel
+        percentage={perfStats.percentage}
+        hits={perfStats.hits}
+        misses={perfStats.misses}
+        totalPracticed={totalPracticed}
+        onReset={onResetProgress}
+      />
+
+      <div className="flex flex-1 flex-col gap-3.5 rounded-[var(--radius-lg)] border border-border bg-surface p-6">
+        <span className="font-display text-xs font-bold uppercase tracking-[1.5px] text-text-muted">
+          COMO QUER PRATICAR?
+        </span>
+        <h2 className="font-display text-[22px] font-bold text-text-primary">
+          Escolha seu treino
+        </h2>
+
+        <div className="flex flex-col">
+          <ModeRow
+            icon={ClipboardList}
+            title="Simulado de 30 questões"
+            subtitle="Prova oficial cronometrada"
+            active
+            onClick={() => onStartSession(SESSION_MODES.OFFICIAL_30)}
+          />
+          <ModeRow
+            icon={BookOpen}
+            title="Todas as questões"
+            subtitle="Banco completo, sem pressa"
+            onClick={() => onStartSession(SESSION_MODES.ALL_QUESTIONS)}
+          />
+          <ModeRow
+            icon={Info}
+            title="Revisão de erros"
+            subtitle="Disponível após seu primeiro erro"
+            disabled={!hasMistakes}
+            onClick={() => onStartSession(SESSION_MODES.MISTAKE_REVIEW)}
+          />
+        </div>
+
+        <div className="rounded-[var(--radius-sm)] bg-surface-muted p-3">
+          <p className="font-body text-xs leading-relaxed text-text-secondary">
+            {hasMistakes
+              ? "Revise questões que você já errou, priorizando seu menor desempenho."
+              : "A Revisão de erros fica disponível depois que você errar uma questão confirmada."}
+          </p>
+        </div>
       </div>
-      <p className="mt-5 rounded-xl bg-stone-50 p-4 text-sm leading-relaxed text-stone-600">
-        {hasMistakes
-          ? "Revise questões que você já errou, priorizando seu menor desempenho."
-          : "A Revisão de erros fica disponível depois que você errar uma questão confirmada."}
-      </p>
-      <button
-        className={linkButtonClass}
-        type="button"
-        onClick={onResetProgress}
-      >
-        Resetar progresso
-      </button>
-    </section>
+    </div>
   );
 }
 
@@ -339,238 +401,223 @@ function QuestionCard({
   onConfirmAnswer,
   onReturnToModeSelection,
   onNextQuestion,
+  onGoToResult,
   onSelectAnswer,
 }) {
   const imageSrc = currentQuestion.image_path || currentQuestion.image_url;
-  const showPerformance =
-    answered && activeSession.mode === SESSION_MODES.MISTAKE_REVIEW;
   const isLastQuestion =
     activeSession.currentIndex + 1 === activeSession.questions.length;
 
+  const getActionStatus = () => {
+    if (!answered) return "none";
+    const selected = currentQuestion.alternatives.find(
+      (a) => a.id === selectedAnswerId,
+    );
+    return selected?.is_correct ? "correct" : "incorrect";
+  };
+
   return (
-    <section className={cardClass}>
-      <button
-        className="mb-6 bg-transparent p-0 font-sans text-sm font-semibold text-slate-700 underline decoration-stone-300 underline-offset-4 hover:text-slate-950"
-        type="button"
-        onClick={onReturnToModeSelection}
-      >
-        Voltar para escolha de sessão
-      </button>
+    <div className="flex flex-col gap-5 px-4 py-7">
+      <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-7">
+        <button
+          className="mb-6 flex cursor-pointer items-center gap-2 bg-transparent font-body text-[13px] font-semibold text-text-secondary transition hover:text-text-primary"
+          type="button"
+          onClick={onReturnToModeSelection}
+        >
+          <span className="text-text-muted">←</span>
+          Voltar para escolha de sessão
+        </button>
 
-      {imageSrc ? (
-        <div className="mb-6 rounded-2xl bg-stone-50 p-4 text-center">
-          <img
-            className="inline-block max-h-56 max-w-56 rounded-lg"
-            src={imageSrc}
-            alt="Imagem da questão"
-          />
-        </div>
-      ) : null}
-
-      <h2 className="mb-6 text-2xl font-black leading-snug tracking-tight">
-        {currentQuestion.question}
-      </h2>
-      <div className="grid gap-3">
-        {currentQuestion.alternatives.map((answer) => (
-          <button
-            className={getAnswerClass(answer, answered, selectedAnswerId)}
-            key={answer.id}
-            type="button"
-            disabled={answered}
-            onClick={() => onSelectAnswer(answer.id)}
-          >
-            {answer.text}
-          </button>
-        ))}
-      </div>
-
-      {showPerformance ? (
-        <p className="mt-5 rounded-xl bg-stone-50 p-4 text-sm font-bold text-stone-600">
-          {formatQuestionPerformance(performance, currentQuestion.id)}
-        </p>
-      ) : null}
-
-      <div className={actionsClass}>
-        {!answered ? (
-          <button
-            className={primaryButtonClass}
-            type="button"
-            disabled={!selectedAnswerId}
-            onClick={onConfirmAnswer}
-          >
-            Confirmar
-          </button>
-        ) : (
-          <button
-            className={primaryButtonClass}
-            type="button"
-            onClick={onNextQuestion}
-          >
-            {isLastQuestion ? "Ver resultado" : "Próxima"}
-          </button>
+        {imageSrc && (
+          <div className="mb-6 rounded-[var(--radius-md)] bg-surface-muted p-4 text-center">
+            <img
+              className="inline-block max-h-56 max-w-56 rounded-lg"
+              src={imageSrc}
+              alt="Imagem da questão"
+            />
+          </div>
         )}
+
+        <div className="mb-5 flex items-center gap-[18px]">
+          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-primary-soft">
+            <span className="font-display text-2xl font-extrabold text-primary">
+              {activeSession.currentIndex + 1}
+            </span>
+          </div>
+          <h2 className="font-display text-[22px] font-bold leading-snug text-text-primary">
+            {currentQuestion.question}
+          </h2>
+        </div>
+
+        <div className="mb-5 flex flex-col gap-2.5">
+          {currentQuestion.alternatives.map((answer, index) => (
+            <AnswerOption
+              answer={answer}
+              letter={LETTERS[index]}
+              answered={answered}
+              selectedAnswerId={selectedAnswerId}
+              onSelect={onSelectAnswer}
+              key={answer.id}
+            />
+          ))}
+        </div>
+
+        {answered && activeSession.mode === SESSION_MODES.MISTAKE_REVIEW && (
+          <p className="mb-4 rounded-xl bg-surface-muted p-4 font-body text-sm font-bold text-text-secondary">
+            {formatQuestionPerformance(performance, currentQuestion.id)}
+          </p>
+        )}
+
+        <ActionDock
+          status={getActionStatus()}
+          confirmed={answered}
+          disabled={!selectedAnswerId}
+          nextLabel={isLastQuestion ? "Ver resultado" : "Próxima"}
+          onConfirm={onConfirmAnswer}
+          onNext={isLastQuestion ? onGoToResult : onNextQuestion}
+        />
       </div>
-    </section>
+    </div>
   );
 }
 
-function ResultCard({ summary, onRestart, onShowPostSessionReview }) {
+function ResultCard({ summary, onRestart, onShowPostSessionReview, onBackToHome }) {
   return (
-    <section className={cardClass}>
-      <h2 className="mb-4 text-2xl font-black tracking-tight">
-        Resultado da sessão de prática
+    <div className="flex flex-col items-center gap-5 px-4 py-10">
+      <ScoreRing
+        score={summary.score}
+        total={summary.totalQuestions}
+        percentage={summary.percentage}
+      />
+
+      <h2 className="font-display text-2xl font-bold text-text-primary">
+        Você acertou {summary.score} de {summary.totalQuestions}
       </h2>
-      <p className="text-lg font-semibold">
-        Você acertou {summary.score} de {summary.totalQuestions} questões.
+
+      <p className="max-w-[420px] text-center font-body text-sm leading-relaxed text-text-secondary">
+        {summary.percentage >= 70
+          ? "Aprovado! Continue treinando para chegar com confiança ao exame oficial do Detran RJ."
+          : "Continue treinando para melhorar seu aproveitamento no exame oficial do Detran RJ."}
       </p>
-      <p className="mt-2 text-stone-600">
-        Aproveitamento: {summary.percentage}%.
-      </p>
-      <p className="text-stone-600">Questões erradas: {summary.missedCount}.</p>
-      <div className={actionsClass}>
-        <button
-          className={primaryButtonClass}
-          type="button"
-          onClick={onRestart}
-        >
-          Iniciar novo Simulado de 30 questões
-        </button>
-        {summary.canOpenPostSessionReview ? (
-          <button
-            className={secondaryButtonClass}
-            type="button"
-            onClick={onShowPostSessionReview}
-          >
-            Revisar erros desta sessão
-          </button>
-        ) : null}
+
+      <div className="flex gap-3">
+        <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-3">
+          <span className="font-display text-base font-bold text-success">
+            {summary.score}
+          </span>
+          <span className="font-body text-xs text-text-secondary">acertos</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-3">
+          <span className="font-display text-base font-bold text-error">
+            {summary.missedCount}
+          </span>
+          <span className="font-body text-xs text-text-secondary">erros</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-3">
+          <span className="font-display text-base font-bold text-primary">
+            {summary.percentage}%
+          </span>
+          <span className="font-body text-xs text-text-secondary">
+            aproveitamento
+          </span>
+        </div>
       </div>
-    </section>
+
+      <div className="mt-2 flex gap-3">
+        <Button icon="rotate-ccw" onClick={onRestart}>
+          Refazer simulado
+        </Button>
+        {summary.canOpenPostSessionReview && (
+          <Button variant="secondary" icon="book-open" onClick={onShowPostSessionReview}>
+            Revisar respostas
+          </Button>
+        )}
+        <Button variant="ghost" icon="arrow-left" onClick={onBackToHome}>
+          Voltar ao início
+        </Button>
+      </div>
+    </div>
   );
 }
 
 function ReviewCard({ review, onBackToResults, onNewSession }) {
   return (
-    <section className={cardClass}>
-      <h2 className="mb-4 text-2xl font-black tracking-tight">
-        Revisão pós-sessão
-      </h2>
-      <div className="grid gap-4">
-        {review.items.map((item, index) => (
-          <article
-            className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
-            key={item.questionId}
-          >
-            <h3 className="mb-3 text-lg font-bold leading-snug">
-              Erro {index + 1}: {item.questionText}
-            </h3>
-            {item.image.path || item.image.url ? (
-              <img
-                className="mb-3 block max-h-44 max-w-44 rounded-lg"
-                src={item.image.path || item.image.url}
-                alt="Imagem da questão"
-              />
-            ) : null}
-            <ul className="list-disc space-y-1.5 pl-6 text-stone-700">
-              {item.alternatives.map((answer) => (
-                <li
-                  className={getReviewAnswerClass(answer, item)}
-                  key={answer.id}
-                >
-                  {getReviewAnswerText(answer, item)}
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))}
+    <div className="flex flex-col gap-5 px-4 py-7">
+      <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-7">
+        <h2 className="mb-1 font-display text-2xl font-bold text-text-primary">
+          Revisão pós-sessão
+        </h2>
+        <p className="mb-5 font-body text-[13px] text-text-secondary">
+          Revise apenas os erros da sessão recém-finalizada.
+        </p>
+
+        <div className="flex flex-col gap-4">
+          {review.items.map((item, index) => (
+            <article
+              className="rounded-[var(--radius-md)] border border-border bg-surface-muted p-5"
+              key={item.questionId}
+            >
+              <div className="mb-3">
+                <Badge color="error" label={`ERRO ${index + 1}`} />
+              </div>
+
+              <h3 className="mb-3 font-display text-[17px] font-bold leading-snug text-text-primary">
+                {item.questionText}
+              </h3>
+
+              {item.image.path || item.image.url ? (
+                <img
+                  className="mb-3 block max-h-44 max-w-44 rounded-lg"
+                  src={item.image.path || item.image.url}
+                  alt="Imagem da questão"
+                />
+              ) : null}
+
+              <div className="flex flex-col gap-2">
+                {item.alternatives.map((answer) => {
+                  const isCorrect = answer.id === item.correctAnswer.id;
+                  const isSelected = answer.id === item.selectedAnswer.id;
+
+                  let dotColor = "bg-border";
+                  let textColor = "text-text-secondary";
+                  let suffix = "";
+
+                  if (isCorrect) {
+                    dotColor = "bg-success";
+                    textColor = "text-success font-bold";
+                    suffix = " (resposta correta)";
+                  } else if (isSelected) {
+                    dotColor = "bg-error";
+                    textColor = "text-error font-bold";
+                    suffix = " (sua resposta)";
+                  }
+
+                  return (
+                    <div className="flex items-center gap-2.5" key={answer.id}>
+                      <span
+                        className={`h-2 w-2 flex-shrink-0 rounded-full ${dotColor}`}
+                      />
+                      <span className={`font-body text-sm ${textColor}`}>
+                        {answer.text}
+                        {suffix}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <Button variant="secondary" icon="arrow-left" onClick={onBackToResults}>
+            Voltar ao resultado
+          </Button>
+          <Button icon="rotate-ccw" onClick={onNewSession}>
+            Iniciar novo simulado
+          </Button>
+        </div>
       </div>
-      <div className={actionsClass}>
-        <button
-          className={secondaryButtonClass}
-          type="button"
-          onClick={onBackToResults}
-        >
-          Voltar ao resultado
-        </button>
-        <button
-          className={primaryButtonClass}
-          type="button"
-          onClick={onNewSession}
-        >
-          Iniciar novo Simulado de 30 questões
-        </button>
-      </div>
-    </section>
+    </div>
   );
-}
-
-function getProgressText(screen, activeSession, progressOverride) {
-  if (progressOverride) {
-    return progressOverride;
-  }
-
-  if (screen === SCREEN.MODE) {
-    return "Escolha como deseja praticar.";
-  }
-
-  if (screen === SCREEN.QUESTION && activeSession) {
-    return `${activeSession.title}: questão ${activeSession.currentIndex + 1} de ${activeSession.questions.length}`;
-  }
-
-  if (screen === SCREEN.RESULT) {
-    return "Sessão de prática finalizada.";
-  }
-
-  if (screen === SCREEN.REVIEW) {
-    return "Revise apenas os erros da sessão recém-finalizada.";
-  }
-
-  if (screen === SCREEN.ERROR) {
-    return "Erro ao carregar.";
-  }
-
-  return "Carregando...";
-}
-
-function getAnswerClass(answer, answered, selectedAnswerId) {
-  const baseClass =
-    "w-full rounded-xl border px-4 py-3.5 text-left font-sans text-slate-900 transition disabled:cursor-default";
-
-  if (answered && answer.is_correct) {
-    return `${baseClass} border-emerald-300 bg-emerald-50 font-semibold`;
-  }
-
-  if (answered && answer.id === selectedAnswerId) {
-    return `${baseClass} border-red-300 bg-red-50 font-semibold`;
-  }
-
-  if (answer.id === selectedAnswerId) {
-    return `${baseClass} border-slate-900 bg-stone-100 shadow-inner`;
-  }
-
-  return `${baseClass} border-stone-200 bg-white hover:border-stone-400 hover:bg-stone-50`;
-}
-
-function getReviewAnswerClass(answer, item) {
-  if (answer.id === item.correctAnswer.id) {
-    return "font-bold text-emerald-700";
-  }
-
-  if (answer.id === item.selectedAnswer.id) {
-    return "font-bold text-red-700";
-  }
-
-  return "";
-}
-
-function getReviewAnswerText(answer, item) {
-  if (answer.id === item.correctAnswer.id) {
-    return `${answer.text} (resposta correta)`;
-  }
-
-  if (answer.id === item.selectedAnswer.id) {
-    return `${answer.text} (sua resposta)`;
-  }
-
-  return answer.text;
 }

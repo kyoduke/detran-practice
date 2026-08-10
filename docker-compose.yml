@@ -2,4 +2,7 @@ services:
   detran-exam:
     build: .
     ports:
-      - "8080:80"
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
