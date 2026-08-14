@@ -49,8 +49,8 @@ export default function ScoreRing({
         <span className="font-display text-[36px] font-bold text-text-primary">
           {score}
         </span>
-        <span className="font-body text-xs text-text-muted">
-          {caption || `de ${total}`}
+        <span className="font-body text-sm text-text-muted text-center max-w-[90px] leading-tight">
+          {caption || (total ? `de ${total}` : null)}
         </span>
       </div>
     </div>

@@ -10,8 +10,8 @@ export default function PerformancePanel({
   onReset,
 }) {
   return (
-    <div className="flex w-60 flex-col items-center gap-3.5 rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-      <span className="w-full font-display text-xs font-bold uppercase tracking-[1.5px] text-text-muted">
+    <div className="flex w-60 flex-col items-center gap-4 rounded-[var(--radius-lg)] border border-border bg-surface p-5">
+      <span className="w-full text-center font-display text-xs font-bold uppercase tracking-[1.5px] text-text-muted">
         Seu desempenho
       </span>
 
@@ -19,7 +19,6 @@ export default function PerformancePanel({
         score={`${percentage}%`}
         percentage={percentage}
         size={140}
-        caption="aproveitamento geral"
       />
 
       <div className="flex w-full justify-center gap-2">
@@ -29,7 +28,7 @@ export default function PerformancePanel({
 
       <div className="h-px w-full bg-border" />
 
-      <div className="flex w-full items-center gap-2">
+      <div className="flex w-full items-center justify-center gap-2">
         <ListChecks size={14} className="text-text-muted" />
         <span className="font-body text-xs text-text-secondary">
           {totalPracticed} questões praticadas
@@ -37,11 +36,11 @@ export default function PerformancePanel({
       </div>
 
       <button
-        className="flex w-full cursor-pointer items-center justify-end gap-1.5 bg-transparent font-body text-xs font-semibold text-text-secondary transition hover:text-text-primary"
+        className="flex w-full cursor-pointer items-center justify-center gap-1 bg-transparent font-body text-[11px] text-text-muted transition hover:text-text-secondary"
         type="button"
         onClick={onReset}
       >
-        <RotateCcw size={14} className="text-text-muted" />
+        <RotateCcw size={12} />
         Resetar progresso
       </button>
     </div>
