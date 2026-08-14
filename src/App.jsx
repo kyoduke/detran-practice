@@ -249,7 +249,7 @@ export default function App() {
   const perfStats = getPerformanceStats();
 
   return (
-    <div className="min-h-screen bg-bg text-text-primary">
+    <div className="flex min-h-screen flex-col bg-bg text-text-primary">
       {screen === SCREEN.MODE && (
         <>
           <AppBar>
@@ -291,7 +291,7 @@ export default function App() {
         </AppBar>
       )}
 
-      <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-12">
+      <main className="mx-auto w-full flex-1 max-w-3xl px-4 py-8 sm:py-12">
         {screen === SCREEN.MODE ? null : null}
 
         {screen === SCREEN.QUESTION && currentQuestion ? (
