@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ClipboardList, BookOpen, Info } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ClipboardList, BookOpen, Info, House, CircleHelp } from "lucide-react";
 
 import {
   buildQuestionById,
@@ -21,6 +21,10 @@ import {
   buildResultSummary,
   captureMissedAnswer,
 } from "./resultViewModels.js";
+import {
+  loadShortcutsDismissed,
+  saveShortcutsDismissed,
+} from "./shortcutsPreference.js";
 
 import Logo from "./components/Logo.jsx";
 import AppBar from "./components/AppBar.jsx";
@@ -34,6 +38,7 @@ import ActionDock from "./components/ActionDock.jsx";
 import ModeRow from "./components/ModeRow.jsx";
 import PerformancePanel from "./components/PerformancePanel.jsx";
 import FeaturesBar from "./components/FeaturesBar.jsx";
+import ShortcutsPopup from "./components/ShortcutsPopup.jsx";
 
 const DATA_URL = `${import.meta.env.BASE_URL}detran_rj_exams.json`;
 
@@ -46,13 +51,17 @@ const SCREEN = {
   ERROR: "error",
 };
 
-const LETTERS = ["A", "B", "C", "D", "E", "F"];
-
 const MODE_LABELS = {
   [SESSION_MODES.OFFICIAL_30]: "SIMULADO DE 30 QUESTÕES",
   [SESSION_MODES.ALL_QUESTIONS]: "TODAS AS QUESTÕES",
   [SESSION_MODES.MISTAKE_REVIEW]: "REVISÃO DE ERROS",
 };
+
+function hasAnswered(result) {
+  return Boolean(
+    result && result.isCorrect !== null && result.isCorrect !== undefined,
+  );
+}
 
 export default function App() {
   const [screen, setScreen] = useState(SCREEN.LOADING);
@@ -62,8 +71,10 @@ export default function App() {
   const [questionById, setQuestionById] = useState(() => new Map());
   const [performance, setPerformance] = useState(() => loadPerformance());
   const [activeSession, setActiveSession] = useState(null);
-  const [selectedAnswerId, setSelectedAnswerId] = useState(null);
-  const [answered, setAnswered] = useState(false);
+  const [shortcutsDismissedForever, setShortcutsDismissedForever] = useState(
+    () => loadShortcutsDismissed(),
+  );
+  const [showShortcutsPopup, setShowShortcutsPopup] = useState(false);
 
   useEffect(() => {
     async function loadQuestions() {
@@ -95,6 +106,10 @@ export default function App() {
 
   const currentQuestion =
     activeSession?.questions[activeSession.currentIndex] || null;
+  const currentResult =
+    activeSession?.questionResults?.[activeSession.currentIndex] ?? null;
+  const answered = hasAnswered(currentResult);
+  const selectedAnswerId = currentResult?.selectedAnswerId ?? null;
   const availableQuestionIds = [...questionById.keys()];
   const hasMistakes = hasMistakeReviewQuestions(
     performance,
@@ -140,24 +155,38 @@ export default function App() {
       currentIndex: 0,
       score: 0,
       missedAnswers: [],
+      questionResults: [],
     });
-    setSelectedAnswerId(null);
-    setAnswered(false);
+    setShowShortcutsPopup(!shortcutsDismissedForever);
     setScreen(SCREEN.QUESTION);
   }
 
+  function setQuestionResult(session, index, result) {
+    const questionResults = [...session.questionResults];
+    questionResults[index] = result;
+    return { ...session, questionResults };
+  }
+
   function selectAnswer(answerId) {
-    if (answered) return;
-    setSelectedAnswerId(answerId);
+    if (!activeSession) return;
+    const current = activeSession.questionResults?.[activeSession.currentIndex];
+    if (hasAnswered(current)) return;
+
+    setActiveSession(
+      setQuestionResult(activeSession, activeSession.currentIndex, {
+        selectedAnswerId: answerId,
+        isCorrect: null,
+      }),
+    );
   }
 
   function confirmAnswer() {
-    if (!activeSession || !currentQuestion || !selectedAnswerId || answered) {
-      return;
-    }
+    if (!activeSession || !currentQuestion) return;
+    const current = activeSession.questionResults?.[activeSession.currentIndex];
+    if (!current?.selectedAnswerId || hasAnswered(current)) return;
 
     const selected = currentQuestion.alternatives.find(
-      (answer) => answer.id === selectedAnswerId,
+      (answer) => answer.id === current.selectedAnswerId,
     );
     const isCorrect = Boolean(selected && selected.is_correct);
     const nextPerformance = recordConfirmedAnswer(
@@ -167,18 +196,20 @@ export default function App() {
     );
 
     setActiveSession({
-      ...activeSession,
+      ...setQuestionResult(activeSession, activeSession.currentIndex, {
+        selectedAnswerId: current.selectedAnswerId,
+        isCorrect,
+      }),
       score: activeSession.score + (isCorrect ? 1 : 0),
       missedAnswers: isCorrect
         ? activeSession.missedAnswers
         : [
             ...activeSession.missedAnswers,
-            captureMissedAnswer(currentQuestion, selectedAnswerId),
+            captureMissedAnswer(currentQuestion, current.selectedAnswerId),
           ],
     });
     setPerformance(nextPerformance);
     savePerformance(nextPerformance);
-    setAnswered(true);
   }
 
   function nextQuestion() {
@@ -193,18 +224,128 @@ export default function App() {
       ...activeSession,
       currentIndex: activeSession.currentIndex + 1,
     });
-    setSelectedAnswerId(null);
-    setAnswered(false);
   }
+
+  function previousQuestion() {
+    if (!activeSession) return;
+    if (activeSession.currentIndex <= 0) return;
+
+    setActiveSession({
+      ...activeSession,
+      currentIndex: activeSession.currentIndex - 1,
+    });
+  }
+
+  function dismissShortcutsForSession() {
+    setShowShortcutsPopup(false);
+  }
+
+  function dismissShortcutsForever() {
+    saveShortcutsDismissed();
+    setShortcutsDismissedForever(true);
+    setShowShortcutsPopup(false);
+  }
+
+  function reopenShortcuts() {
+    setShowShortcutsPopup(true);
+  }
+
+  const keyStateRef = useRef(null);
+  keyStateRef.current = {
+    screen,
+    showShortcutsPopup,
+    activeSession,
+    currentQuestion,
+    selectAnswer,
+    confirmAnswer,
+    nextQuestion,
+    previousQuestion,
+    returnToModeSelection,
+  };
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (
+        event.repeat ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const target = event.target;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const {
+        screen: currentScreen,
+        showShortcutsPopup: popupOpen,
+        activeSession: session,
+        currentQuestion: question,
+      } = keyStateRef.current;
+
+      if (currentScreen !== SCREEN.QUESTION || popupOpen) return;
+
+      const current = session?.questionResults?.[session.currentIndex];
+      const isAnswered = hasAnswered(current);
+      const keyNumber = Number(event.key);
+
+      if (
+        Number.isInteger(keyNumber) &&
+        keyNumber >= 1 &&
+        keyNumber <= (question?.alternatives.length || 0)
+      ) {
+        event.preventDefault();
+        if (!isAnswered && question) {
+          const alternative = question.alternatives[keyNumber - 1];
+          if (alternative) {
+            keyStateRef.current.selectAnswer(alternative.id);
+          }
+        }
+        return;
+      }
+
+      if (
+        event.key === "ArrowRight" ||
+        event.key === "Enter" ||
+        event.key === " "
+      ) {
+        event.preventDefault();
+        if (!isAnswered && current?.selectedAnswerId) {
+          keyStateRef.current.confirmAnswer();
+        } else if (isAnswered) {
+          keyStateRef.current.nextQuestion();
+        }
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        keyStateRef.current.previousQuestion();
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        keyStateRef.current.returnToModeSelection();
+        return;
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   function returnToModeSelection() {
     const hasSessionProgress =
-      answered ||
-      selectedAnswerId ||
-      (activeSession &&
-        (activeSession.currentIndex > 0 ||
-          activeSession.score > 0 ||
-          activeSession.missedAnswers.length > 0));
+      activeSession?.questionResults?.some((result) => result != null) ?? false;
 
     if (
       hasSessionProgress &&
@@ -216,8 +357,6 @@ export default function App() {
     }
 
     setActiveSession(null);
-    setSelectedAnswerId(null);
-    setAnswered(false);
     setError("");
     setProgressOverride("");
     setScreen(SCREEN.MODE);
@@ -225,8 +364,6 @@ export default function App() {
 
   function goToHome() {
     setActiveSession(null);
-    setSelectedAnswerId(null);
-    setAnswered(false);
     setError("");
     setProgressOverride("");
     setScreen(SCREEN.MODE);
@@ -304,8 +441,10 @@ export default function App() {
             onConfirmAnswer={confirmAnswer}
             onReturnToModeSelection={returnToModeSelection}
             onNextQuestion={nextQuestion}
+            onPreviousQuestion={previousQuestion}
             onGoToResult={() => setScreen(SCREEN.RESULT)}
             onSelectAnswer={selectAnswer}
+            onReopenShortcuts={reopenShortcuts}
           />
         ) : null}
 
@@ -326,7 +465,14 @@ export default function App() {
           />
         ) : null}
 
-        {error ? (
+        {screen === SCREEN.QUESTION && showShortcutsPopup && (
+        <ShortcutsPopup
+          onDismissForSession={dismissShortcutsForSession}
+          onDismissForever={dismissShortcutsForever}
+        />
+      )}
+
+      {error ? (
           <p className="mt-4 rounded-xl border border-error/20 bg-error-soft p-4 font-medium text-error">
             {error}
           </p>
@@ -401,12 +547,15 @@ function QuestionCard({
   onConfirmAnswer,
   onReturnToModeSelection,
   onNextQuestion,
+  onPreviousQuestion,
   onGoToResult,
   onSelectAnswer,
+  onReopenShortcuts,
 }) {
   const imageSrc = currentQuestion.image_path || currentQuestion.image_url;
   const isLastQuestion =
     activeSession.currentIndex + 1 === activeSession.questions.length;
+  const canGoBack = activeSession.currentIndex > 0;
 
   const getActionStatus = () => {
     if (!answered) return "none";
@@ -419,14 +568,26 @@ function QuestionCard({
   return (
     <div className="flex flex-col gap-5 px-4 py-7">
       <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-7">
-        <button
-          className="mb-6 flex cursor-pointer items-center gap-2 bg-transparent font-body text-[13px] font-semibold text-text-secondary transition hover:text-text-primary"
-          type="button"
-          onClick={onReturnToModeSelection}
-        >
-          <span className="text-text-muted">←</span>
-          Voltar para escolha de sessão
-        </button>
+        <div className="mb-6 flex items-center justify-between">
+          <button
+            className="flex cursor-pointer items-center gap-2 bg-transparent font-body text-[13px] font-semibold text-text-secondary transition hover:text-text-primary"
+            type="button"
+            onClick={onReturnToModeSelection}
+          >
+            <span className="text-text-muted">
+              <House size={14} />
+            </span>
+            Sair da sessão
+          </button>
+          <button
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-transparent text-text-secondary transition hover:bg-surface-muted hover:text-text-primary"
+            type="button"
+            aria-label="Atalhos de teclado"
+            onClick={onReopenShortcuts}
+          >
+            <CircleHelp size={18} />
+          </button>
+        </div>
 
         {imageSrc && (
           <div className="mb-6 rounded-[var(--radius-md)] bg-surface-muted p-4 text-center">
@@ -453,7 +614,7 @@ function QuestionCard({
           {currentQuestion.alternatives.map((answer, index) => (
             <AnswerOption
               answer={answer}
-              letter={LETTERS[index]}
+              letter={String(index + 1)}
               answered={answered}
               selectedAnswerId={selectedAnswerId}
               onSelect={onSelectAnswer}
@@ -475,6 +636,8 @@ function QuestionCard({
           nextLabel={isLastQuestion ? "Ver resultado" : "Próxima"}
           onConfirm={onConfirmAnswer}
           onNext={isLastQuestion ? onGoToResult : onNextQuestion}
+          onBack={onPreviousQuestion}
+          canGoBack={canGoBack}
         />
       </div>
     </div>

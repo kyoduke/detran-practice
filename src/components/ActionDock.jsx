@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import Button from "./Button";
 
 const statusConfig = {
@@ -13,14 +14,29 @@ export default function ActionDock({
   nextLabel = "Próxima",
   onConfirm,
   onNext,
+  onBack,
+  canGoBack,
 }) {
   const s = statusConfig[status];
 
   return (
     <div className="flex w-full items-center justify-between border-t border-border pt-4">
-      <div className="flex items-center gap-2">
-        <span className={`h-2 w-2 rounded-full ${s.dot}`} />
-        <span className={`font-body text-xs ${s.text}`}>{s.label}</span>
+      <div className="flex items-center gap-3">
+        <button
+          className="flex cursor-pointer items-center gap-2 bg-transparent font-body text-[13px] font-semibold text-text-secondary transition enabled:hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          type="button"
+          disabled={!canGoBack}
+          onClick={onBack}
+        >
+          <span className="text-text-muted">
+            <ArrowLeft size={14} />
+          </span>
+          Anterior
+        </button>
+        <span className="flex items-center gap-2">
+          <span className={`h-2 w-2 rounded-full ${s.dot}`} />
+          <span className={`font-body text-xs ${s.text}`}>{s.label}</span>
+        </span>
       </div>
       {!confirmed ? (
         <Button

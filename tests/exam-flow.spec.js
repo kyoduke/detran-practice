@@ -13,6 +13,12 @@ test("fluxo completo de simulado: 30 questões até o resultado", async ({
   // Inicia o simulado de 30 questões
   await page.getByRole("button", { name: /simulado de 30 questões/i }).click();
 
+  // Dispensa o popup de atalhos de teclado exibido na primeira questão
+  await expect(
+    page.getByRole("button", { name: /^entendi, começar$/i }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /^entendi, começar$/i }).click();
+
   // Responde 30 questões
   for (let i = 0; i < 30; i++) {
     // Aguarda a questão aparecer (botão Confirmar visível)
