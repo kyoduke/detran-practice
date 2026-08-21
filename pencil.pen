@@ -216,7 +216,7 @@
         {
           "type": "frame",
           "id": "eQ3Yh",
-          "name": "Letter Badge",
+          "name": "Number Badge",
           "width": 32,
           "height": 32,
           "fill": "$primary-soft",
@@ -228,9 +228,9 @@
             {
               "type": "text",
               "id": "AFPZU",
-              "name": "Letter",
+              "name": "Number",
               "fill": "$primary",
-              "content": "A",
+              "content": "1",
               "fontFamily": "$font-display",
               "fontSize": 14,
               "fontWeight": "700"
@@ -1238,7 +1238,8 @@
               "fill": "$text-primary",
               "content": "A placa de regulamentação indica as condições de uso da via.",
               "fontFamily": "$font-body",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -1851,7 +1852,7 @@
               "width": "fill_container",
               "descendants": {
                 "AFPZU": {
-                  "content": "A"
+                  "content": "1"
                 },
                 "f29XcO": {
                   "content": "Estacionar em local proibido"
@@ -1872,7 +1873,7 @@
                   "fill": "$primary"
                 },
                 "AFPZU": {
-                  "content": "C",
+                  "content": "3",
                   "fill": "#FFFFFF"
                 },
                 "f29XcO": {
@@ -1894,7 +1895,7 @@
                   "fill": "$success"
                 },
                 "AFPZU": {
-                  "content": "B",
+                  "content": "2",
                   "fill": "#FFFFFF"
                 },
                 "f29XcO": {
@@ -1916,7 +1917,7 @@
                   "fill": "$error"
                 },
                 "AFPZU": {
-                  "content": "D",
+                  "content": "4",
                   "fill": "#FFFFFF"
                 },
                 "f29XcO": {
@@ -2359,7 +2360,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "A"
+                          "content": "1"
                         },
                         "f29XcO": {
                           "content": "É proibido estacionar."
@@ -2374,7 +2375,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "B"
+                          "content": "2"
                         },
                         "f29XcO": {
                           "content": "É proibido parar e estacionar."
@@ -2395,7 +2396,7 @@
                           "fill": "$primary"
                         },
                         "AFPZU": {
-                          "content": "C",
+                          "content": "3",
                           "fill": "#FFFFFF"
                         },
                         "f29XcO": {
@@ -2411,7 +2412,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "D"
+                          "content": "4"
                         },
                         "f29XcO": {
                           "content": "É proibido ultrapassar."
@@ -3471,7 +3472,7 @@
                       "name": "Back Icon",
                       "width": 14,
                       "height": 14,
-                      "icon": "arrow-left",
+                      "icon": "house",
                       "library": "lucide",
                       "fill": "$text-muted"
                     },
@@ -3480,7 +3481,7 @@
                       "id": "tzHul",
                       "name": "Back Link",
                       "fill": "$text-secondary",
-                      "content": "Voltar para escolha de sessão",
+                      "content": "Sair da sessão",
                       "fontFamily": "$font-body",
                       "fontSize": 13,
                       "fontWeight": "600"
@@ -3550,7 +3551,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "A"
+                          "content": "1"
                         },
                         "f29XcO": {
                           "content": "Aplicar os primeiros socorros sem observar o ambiente."
@@ -3565,7 +3566,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "B"
+                          "content": "2"
                         },
                         "f29XcO": {
                           "content": "Acionar o socorro apenas após avaliar as lesões."
@@ -3580,7 +3581,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "C"
+                          "content": "3"
                         },
                         "f29XcO": {
                           "content": "Verificar se o local é seguro antes de se aproximar."
@@ -3595,7 +3596,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "D"
+                          "content": "4"
                         },
                         "f29XcO": {
                           "content": "Tentar remover as vítimas imediatamente."
@@ -3624,46 +3625,103 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "uCOqp",
-                      "name": "Status",
-                      "gap": 8,
+                      "id": "kWPmw",
+                      "name": "Left Actions",
+                      "gap": 12,
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "ellipse",
-                          "id": "tMrYE",
-                          "name": "Dot",
-                          "fill": "$text-muted",
-                          "width": 8,
-                          "height": 8
+                          "type": "frame",
+                          "id": "iz12i",
+                          "name": "Anterior",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "VDkOl",
+                              "name": "Anterior Icon",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "arrow-left",
+                              "library": "lucide",
+                              "fill": "$text-muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FkmHf",
+                              "name": "Anterior Label",
+                              "fill": "$text-secondary",
+                              "content": "Anterior",
+                              "fontFamily": "$font-body",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
                         },
                         {
-                          "type": "text",
-                          "id": "DHd0H",
-                          "name": "Status Text",
-                          "fill": "$text-muted",
-                          "content": "Nenhuma resposta selecionada",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "type": "frame",
+                          "id": "uCOqp",
+                          "name": "Status",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "tMrYE",
+                              "name": "Dot",
+                              "fill": "$text-muted",
+                              "width": 8,
+                              "height": 8
+                            },
+                            {
+                              "type": "text",
+                              "id": "DHd0H",
+                              "name": "Status Text",
+                              "fill": "$text-muted",
+                              "content": "Nenhuma resposta selecionada",
+                              "fontFamily": "$font-body",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         }
                       ]
                     },
                     {
-                      "id": "nAkew",
-                      "type": "ref",
-                      "ref": "V3Kanp",
-                      "name": "Confirm",
-                      "fill": "$border",
-                      "descendants": {
-                        "uIHFi": {
-                          "enabled": false
-                        },
-                        "gXeqV": {
-                          "content": "Confirmar",
+                      "type": "frame",
+                      "id": "KdT0h",
+                      "name": "Right Actions",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "eTd9q",
+                          "name": "Shortcuts Help",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "keyboard",
+                          "library": "lucide",
                           "fill": "$text-muted"
+                        },
+                        {
+                          "id": "nAkew",
+                          "type": "ref",
+                          "ref": "V3Kanp",
+                          "name": "Confirm",
+                          "fill": "$border",
+                          "descendants": {
+                            "uIHFi": {
+                              "enabled": false
+                            },
+                            "gXeqV": {
+                              "content": "Confirmar",
+                              "fill": "$text-muted"
+                            }
+                          }
                         }
-                      }
+                      ]
                     }
                   ]
                 }
@@ -3781,7 +3839,7 @@
                       "name": "Back Icon",
                       "width": 14,
                       "height": 14,
-                      "icon": "arrow-left",
+                      "icon": "house",
                       "library": "lucide",
                       "fill": "$text-muted"
                     },
@@ -3790,7 +3848,7 @@
                       "id": "FYG6q",
                       "name": "Back Link",
                       "fill": "$text-secondary",
-                      "content": "Voltar para escolha de sessão",
+                      "content": "Sair da sessão",
                       "fontFamily": "$font-body",
                       "fontSize": 13,
                       "fontWeight": "600"
@@ -3860,7 +3918,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "A"
+                          "content": "1"
                         },
                         "f29XcO": {
                           "content": "Aplicar os primeiros socorros sem observar o ambiente."
@@ -3875,7 +3933,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "B"
+                          "content": "2"
                         },
                         "f29XcO": {
                           "content": "Acionar o socorro apenas após avaliar as lesões."
@@ -3896,7 +3954,7 @@
                           "fill": "$success"
                         },
                         "AFPZU": {
-                          "content": "C",
+                          "content": "3",
                           "fill": "#FFFFFF"
                         },
                         "f29XcO": {
@@ -3912,7 +3970,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "D"
+                          "content": "4"
                         },
                         "f29XcO": {
                           "content": "Tentar remover as vítimas imediatamente."
@@ -4098,7 +4156,7 @@
                       "name": "Back Icon",
                       "width": 14,
                       "height": 14,
-                      "icon": "arrow-left",
+                      "icon": "house",
                       "library": "lucide",
                       "fill": "$text-muted"
                     },
@@ -4107,7 +4165,7 @@
                       "id": "X4IfqU",
                       "name": "Back Link",
                       "fill": "$text-secondary",
-                      "content": "Voltar para escolha de sessão",
+                      "content": "Sair da sessão",
                       "fontFamily": "$font-body",
                       "fontSize": 13,
                       "fontWeight": "600"
@@ -4177,7 +4235,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "A"
+                          "content": "1"
                         },
                         "f29XcO": {
                           "content": "Aplicar os primeiros socorros sem observar o ambiente."
@@ -4198,7 +4256,7 @@
                           "fill": "$error"
                         },
                         "AFPZU": {
-                          "content": "B",
+                          "content": "2",
                           "fill": "#FFFFFF"
                         },
                         "f29XcO": {
@@ -4220,7 +4278,7 @@
                           "fill": "$success"
                         },
                         "AFPZU": {
-                          "content": "C",
+                          "content": "3",
                           "fill": "#FFFFFF"
                         },
                         "f29XcO": {
@@ -4236,7 +4294,7 @@
                       "width": "fill_container",
                       "descendants": {
                         "AFPZU": {
-                          "content": "D"
+                          "content": "4"
                         },
                         "f29XcO": {
                           "content": "Tentar remover as vítimas imediatamente."
@@ -4506,7 +4564,8 @@
                               "fill": "$text-secondary",
                               "content": "Aplicar os primeiros socorros sem observar o ambiente.",
                               "fontFamily": "$font-body",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -4586,7 +4645,8 @@
                               "fill": "$text-secondary",
                               "content": "Tentar remover as vítimas imediatamente.",
                               "fontFamily": "$font-body",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -4720,7 +4780,8 @@
                               "fill": "$text-secondary",
                               "content": "Área de estacionamento rotativo.",
                               "fontFamily": "$font-body",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -4746,7 +4807,8 @@
                               "fill": "$text-secondary",
                               "content": "É proibido ultrapassar.",
                               "fontFamily": "$font-body",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -4789,6 +4851,432 @@
                       }
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nAHL6",
+      "x": 3093,
+      "y": 3072,
+      "name": "Pop-up · Atalhos de teclado",
+      "clip": true,
+      "width": 760,
+      "height": 720,
+      "fill": "#15223880",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Q3TiyI",
+          "name": "Modal",
+          "width": 520,
+          "fill": "$surface",
+          "cornerRadius": "$radius-lg",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "Wmkm4",
+              "name": "Title",
+              "fill": "$text-primary",
+              "content": "Atalhos de teclado",
+              "fontFamily": "$font-display",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "OJwi4",
+              "name": "Subtitle",
+              "fill": "$text-secondary",
+              "content": "Responda sem tirar a mão do teclado.",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "J0QFW",
+              "name": "Shortcuts",
+              "layout": "vertical",
+              "gap": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fmvCS",
+                  "name": "Row Escolher a alternativa",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "IC4KH",
+                      "name": "Keycaps",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "kr1fG",
+                          "name": "Key 1",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "yVd8o",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "1",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "R0a4u",
+                          "name": "Key 2",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "FRyxK",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "2",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "g4cTW",
+                          "name": "Key 3",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "AXUrk",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "3",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lBIfo",
+                          "name": "Key 4",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "iWROm",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "4",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "epwkw",
+                      "name": "Description",
+                      "fill": "$text-primary",
+                      "content": "Escolher a alternativa",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "a4f1W",
+                  "name": "Row Confirmar e avançar",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "W278MV",
+                      "name": "Keycaps",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vfkL4",
+                          "name": "Key Enter",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "p0CQ1",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "Enter",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "KCiny",
+                      "name": "Description",
+                      "fill": "$text-primary",
+                      "content": "Confirmar e avançar",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u21XJe",
+                  "name": "Row Voltar e avançar",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Mqu4Q",
+                      "name": "Keycaps",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "C1RWQ",
+                          "name": "Key ←",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "zpudf",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "←",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "IV6Aj",
+                          "name": "Key →",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "SH5Qw",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "→",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "IdyJp",
+                      "name": "Description",
+                      "fill": "$text-primary",
+                      "content": "Voltar e avançar",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "n63Eq",
+                  "name": "Row Sair da sessão",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ev71f",
+                      "name": "Keycaps",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "IKzF8",
+                          "name": "Key Esc",
+                          "fill": "$surface-muted",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            6,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dW0tv",
+                              "name": "Key Label",
+                              "fill": "$text-primary",
+                              "content": "Esc",
+                              "fontFamily": "$font-display",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Z9CTe4",
+                      "name": "Description",
+                      "fill": "$text-primary",
+                      "content": "Sair da sessão",
+                      "fontFamily": "$font-body",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "pPU3v",
+              "name": "Divider",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "X1Oyb",
+              "name": "Actions",
+              "gap": 12,
+              "justifyContent": "end",
+              "children": [
+                {
+                  "id": "P1iqCW",
+                  "type": "ref",
+                  "ref": "zMpT8",
+                  "name": "Dismiss forever",
+                  "descendants": {
+                    "kwbg5": {
+                      "enabled": false
+                    },
+                    "oSTjq": {
+                      "content": "Não mostrar novamente"
+                    }
+                  }
+                },
+                {
+                  "id": "n9Jvv",
+                  "type": "ref",
+                  "ref": "V3Kanp",
+                  "name": "Start",
+                  "descendants": {
+                    "uIHFi": {
+                      "enabled": false
+                    },
+                    "gXeqV": {
+                      "content": "Entendi, começar"
+                    }
+                  }
                 }
               ]
             }
